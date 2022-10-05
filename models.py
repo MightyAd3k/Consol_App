@@ -31,20 +31,37 @@ class User:
             self._id = cursor.fetchone()[0]
             return True
         return False
-    
+
+    @staticmethod
+    def load_user_by_id(cursor, id_):
+        sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
+        cursor.execute(sql, (id_,))
+        data = cursor.fetchone()
+        if data:
+            id_, username, hashed_password = data
+            loaded_user = User(username)
+            loaded_user._id = id_
+            loaded_user._hashed_password = hashed_password
+            return loaded_user
+        else:
+            return None
 
 
+connection = psycopg2.connect(
+            host=HOST, 
+            user=USER, 
+            password=PASSWORD,
+            port = PORT,
+            database = "console_app_db"
+        )
+connection.autocommit = True
+cursor = connection.cursor()
 
-# connection = psycopg2.connect(
-#             host=HOST, 
-#             user=USER, 
-#             password=PASSWORD,
-#             port = PORT,
-#             database = "console_app_db"
-#         )
-
-
-# connection.autocommit = True
-# cursor = connection.cursor()
 # new_user = User('Adek', 'password123')
 # new_user.save_to_db(cursor)
+
+# user = User.load_user_by_id(cursor, 1)
+# print(user.username)
+
+# user = User.load_user_by_id(cursor, 3)
+# print(user.username)
