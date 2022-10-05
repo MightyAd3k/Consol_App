@@ -46,6 +46,22 @@ class User:
         else:
             return None
 
+    @staticmethod
+    def load_all_users(cursor):
+        sql = "SELECT id, username, hashed_password FROM users"
+        users = []
+        cursor.execute(sql, cursor)
+        for row in cursor.fetchall():
+            id_, username, hashed_password = row
+            loaded_user = User()
+            loaded_user._id = id_
+            loaded_user.username = username
+            loaded_user._hashed_password = hashed_password
+            users.append(loaded_user)
+        return users
+
+
+### TESTING ###
 
 connection = psycopg2.connect(
             host=HOST, 
@@ -59,9 +75,14 @@ cursor = connection.cursor()
 
 # new_user = User('Adek', 'password123')
 # new_user.save_to_db(cursor)
+# new_user = User('Ania', 'password321')
+# new_user.save_to_db(cursor)
 
 # user = User.load_user_by_id(cursor, 1)
 # print(user.username)
-
 # user = User.load_user_by_id(cursor, 3)
 # print(user.username)
+
+# users = User.load_all_users(cursor)
+# for user in users:
+#     print(user.username)
