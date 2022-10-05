@@ -24,6 +24,11 @@ class User:
         self.set_password(password)
 
     def save_to_db(self, cursor):
+        """
+        Add new object to database.
+        
+        :rtype: bool
+        """
         if self._id == -1:
             sql = "INSERT INTO users (username, hashed_password) VALUES(%s, %s) RETURNING id"
             values = (self.username, self.hashed_password)
@@ -38,6 +43,9 @@ class User:
 
     @staticmethod
     def load_user_by_id(cursor, id_):
+        """
+        Load object from database by given id.
+        """
         sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
         cursor.execute(sql, (id_,))
         data = cursor.fetchone()
@@ -52,6 +60,12 @@ class User:
 
     @staticmethod
     def load_all_users(cursor):
+        """
+        Load all objects from database, and them to the list.
+
+        :rtype: list
+        :return: list of all users
+        """
         sql = "SELECT id, username, hashed_password FROM users"
         users = []
         cursor.execute(sql, cursor)
@@ -63,6 +77,17 @@ class User:
             loaded_user._hashed_password = hashed_password
             users.append(loaded_user)
         return users
+
+    def delete(self, cursor):
+        """
+        Delete object by it's id.
+        
+        :rtype: bool
+        """
+        sql = "DELETE FROM users WHERE id=%s"
+        cursor.execute(sql, (self.id,))
+        self._id = -1
+        return True
 
 
 ### TESTING ###
