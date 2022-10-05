@@ -30,7 +30,11 @@ class User:
             cursor.execute(sql, values)
             self._id = cursor.fetchone()[0]
             return True
-        return False
+        else:
+            sql = "UPDATE users SET username=%s, hashed_password=%s WHERE id=%s"
+            values = (self.username, self.hashed_password, self.id)
+            cursor.execute(sql, values)
+            return True
 
     @staticmethod
     def load_user_by_id(cursor, id_):
@@ -73,16 +77,6 @@ connection = psycopg2.connect(
 connection.autocommit = True
 cursor = connection.cursor()
 
-# new_user = User('Adek', 'password123')
-# new_user.save_to_db(cursor)
-# new_user = User('Ania', 'password321')
-# new_user.save_to_db(cursor)
-
-# user = User.load_user_by_id(cursor, 1)
-# print(user.username)
-# user = User.load_user_by_id(cursor, 3)
-# print(user.username)
-
-# users = User.load_all_users(cursor)
-# for user in users:
-#     print(user.username)
+users = User.load_all_users(cursor)
+for user in users:
+    print(user.id, user.username)
