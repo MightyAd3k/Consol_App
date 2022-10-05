@@ -28,7 +28,6 @@ def connect_to_server():
         cursor.execute(check_db_list)
         list_of_databases = cursor.fetchall()
 
-        ### CHECK IF DATABASE EXISTS ###
         try:
             (db_name,) in list_of_databases
         except DuplicateDatabase:
@@ -43,7 +42,7 @@ def connect_to_server():
         print('Server not connected.')
 
 def create_tables():
-    """Createq tables in database. If tables already exist, inform user about it."""
+    """Create tables in database. If tables already exist, inform user about it."""
 
     try:
         connection = psycopg2.connect(
