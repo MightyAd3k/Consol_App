@@ -76,6 +76,7 @@ def generate_salt():
     :rtype: str
     :return: str with generated salt
     """
+    
     salt = ""
     for _ in range(0, 16):
 

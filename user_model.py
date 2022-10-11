@@ -23,12 +23,15 @@ class User:
     def hashed_password(self, password):
         self.set_password(password)
 
-    def save_to_db(self, cursor):
+    def save_user_to_db(self, cursor):
         """
-        Add new object to database.
+        Add new user to database.
         
+        :param class cursor: 
+
         :rtype: bool
         """
+        
         if self._id == -1:
             sql = "INSERT INTO users (username, hashed_password) VALUES(%s, %s) RETURNING id"
             values = (self.username, self.hashed_password)
@@ -45,7 +48,14 @@ class User:
     def load_user_by_id(cursor, id_):
         """
         Load object from database by given id.
+
+        :param class cursor: 
+        :param id_: user's id 
+
+        :rtype: object
+        :return: loaded user
         """
+
         sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
         cursor.execute(sql, (id_,))
         data = cursor.fetchone()
@@ -62,7 +72,14 @@ class User:
     def load_user_by_username(cursor, username):
         """
         Load object from database by it's username.
+
+        :param class cursor: 
+        :param username: user's username
+
+        :rtype: object
+        :return: loaded user
         """
+
         sql = "SELECT id, username, hashed_password FROM users WHERE username=%s"
         cursor.execute(sql, (username,))
         data = cursor.fetchone()
@@ -80,9 +97,12 @@ class User:
         """
         Load all objects from database, and them to the list.
 
+        :param class cursor: 
+
         :rtype: list
         :return: list of all users
         """
+
         sql = "SELECT id, username, hashed_password FROM users"
         users = []
         cursor.execute(sql, cursor)
@@ -98,27 +118,13 @@ class User:
     def delete_user(self, cursor):
         """
         Delete object by it's id.
+
+        :param class cursor: 
         
         :rtype: bool
         """
+
         sql = "DELETE FROM users WHERE id=%s"
         cursor.execute(sql, (self.id,))
         self._id = -1
         return True
-
-
-### TESTING ###
-
-connection = psycopg2.connect(
-            host=HOST, 
-            user=USER, 
-            password=PASSWORD,
-            port = PORT,
-            database = "console_app_db"
-        )
-connection.autocommit = True
-cursor = connection.cursor()
-
-users = User.load_all_users(cursor)
-for user in users:
-    print(user.id, user.username)
