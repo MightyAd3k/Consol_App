@@ -1,3 +1,4 @@
+from hash_password import check_password
 from user_model import User
 from psycopg2.errors import UniqueViolation
 import argparse
@@ -21,4 +22,30 @@ def create_user(cur, username, password):
             user.save_to_db(cur)
         except UniqueViolation:
             print("User already exists.")
+
+
+def edit_password(cur, username, password, new_password):
+    user = User.load_user_by_username(cur, username)
+    if not user:
+        print("User does not exist.")
+    elif check_password(password, new_password):
+        if len(new_password) < 8:
+            print("New password must be at least 8 characters long.")
+        else:
+            user.hashed_password = new_password
+            user.save_to_db(cur)
+            print("Password has been changed.")
+    else:
+        print("Incorrect password.")
+
+    
+def delete_user(cur, username, password):
+    user = User.load_user_by_username(cur, username)
+    if not user:
+        print("User does not exist.")
+    elif check_password(password, user.hashed_password):
+        user.delete_user(cur)
+        print("User deleted.")
+    print("Incorrect password.")
+
 
