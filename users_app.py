@@ -102,7 +102,7 @@ def list_all_users(cur):
 
     users = User.load_all_users(cur)
     for user in users:
-        print(user.username)
+        print(user.id, user.username)
 
 
 if __name__ == "__main__":

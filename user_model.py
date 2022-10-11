@@ -1,5 +1,3 @@
-import psycopg2
-from CONSTANTS import HOST, PASSWORD, PORT, USER
 from hash_password import hash_password
 
 class User:
