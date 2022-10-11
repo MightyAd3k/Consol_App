@@ -59,6 +59,23 @@ class User:
             return None
 
     @staticmethod
+    def load_user_by_username(cursor, username):
+        """
+        Load object from database by it's username.
+        """
+        sql = "SELECT id, username, hashed_password FROM users WHERE username=%s"
+        cursor.execute(sql, (username,))
+        data = cursor.fetchone()
+        if data:
+            id_, username, hashed_password = data
+            loaded_user = User(username)
+            loaded_user._id = id_
+            loaded_user._hashed_password = hashed_password
+            return loaded_user
+        else:
+            return None
+
+    @staticmethod
     def load_all_users(cursor):
         """
         Load all objects from database, and them to the list.
@@ -78,7 +95,7 @@ class User:
             users.append(loaded_user)
         return users
 
-    def delete(self, cursor):
+    def delete_user(self, cursor):
         """
         Delete object by it's id.
         
