@@ -42,12 +42,4 @@ class Message:
             loaded_message.creation_date = creation_date
             messages.append(loaded_message)
         return messages
-
-
-# sql = "INSERT INTO messages (from_id, to_id, text) VALUES (%s, %s, %s)"
-# values = (1, 8, 'Cześć Angelika!')
-# connection = connect(user=USER, password=PASSWORD, host=HOST, port=PORT, database="console_app_db")
-# connection.autocommit = True
-# cursor = connection.cursor()
-# cursor.execute(sql, values)
-# connection.commit()
+        
