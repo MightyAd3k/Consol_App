@@ -12,7 +12,6 @@ class Message:
     @property
     def id(self):
         return self._id
-
  
     def save_message_to_db(self, cursor):
         if self._id == -1:
@@ -29,9 +28,13 @@ class Message:
             return True
 
     @staticmethod
-    def load_all_messages(cursor):
-        sql = "SELECT id, from_id, to_id, text, creation_date FROM messages"
-        cursor.execute(sql)
+    def load_all_messages(cursor, user_id=None):
+        if user_id:
+            sql = "SELECT id, from_id, to_id, text, creation_date FROM messages WHERE from_id=%s"
+            cursor.execute(sql, (user_id,))
+        else:
+            sql = "SELECT id, from_id, to_id, text, creation_date FROM messages"
+            cursor.execute(sql)
         messages = []
         for row in cursor.fetchall():
             id_, from_id, to_id, text, creation_date = row

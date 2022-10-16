@@ -11,13 +11,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--username", help="username")
 parser.add_argument("-p", "--password", help="password")
 parser.add_argument("-t", "--to", help="who should receive the message")
-parser.add_argument("-s", "--send", help="message")
+parser.add_argument("-s", "--send", nargs='+', help="message")
 parser.add_argument("-l", "--list", help="list of messages", action="store_true")
 args = parser.parse_args()
 
 
-def list_all_messages(cur): 
-    messages = Message.load_all_messages(cur)
+def list_all_messages(cur, user): 
+    messages = Message.load_all_messages(cur, user.id)
     for message in messages:
         from_ = User.load_user_by_id(cur, message.from_id)
         to_ = User.load_user_by_id(cur, message.to_id)
@@ -35,6 +35,7 @@ def send_message(cur, from_id, recipient_name, text):
     else:
         print("Message is too long.")
 
+
 if __name__ == "__main__":
     try:
         connection = psycopg2.connect(
@@ -47,14 +48,13 @@ if __name__ == "__main__":
         connection.autocommit = True
         cursor = connection.cursor()
 
-        user = User.load_user_by_username(cursor, args.username)
-        validate_password = check_password(args.password, user.hashed_password)
-        if user:
-            if validate_password:
+        if args.username and args.password:
+            user = User.load_user_by_username(cursor, args.username)
+            if check_password(args.password, user.hashed_password):
                 if args.list:
-                    list_all_messages(cursor)
+                    list_all_messages(cursor, user)
                 elif args.to and args.send:
-                    send_message(cursor, user.id, args.to, args.send)
+                    send_message(cursor, user.id, args.to, ' '.join(args.send))
                 else:
                     parser.print_help()
             else:
