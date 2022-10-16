@@ -31,8 +31,8 @@ class Message:
     @staticmethod
     def load_all_messages(cursor):
         sql = "SELECT id, from_id, to_id, text, creation_date FROM messages"
+        cursor.execute(sql)
         messages = []
-        cursor.execute(sql, cursor)
         for row in cursor.fetchall():
             id_, from_id, to_id, text, creation_date = row
             loaded_message = Message(from_id, to_id, text)
