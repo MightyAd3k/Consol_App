@@ -45,7 +45,7 @@ class User:
     @staticmethod
     def load_user_by_id(cursor, id_):
         """
-        Load object from database by given id.
+        Load user from database by given id.
 
         :param class cursor: 
         :param id_: user's id 
@@ -69,7 +69,7 @@ class User:
     @staticmethod
     def load_user_by_username(cursor, username):
         """
-        Load object from database by it's username.
+        Load user from database by it's username.
 
         :param class cursor: 
         :param username: user's username
@@ -93,7 +93,7 @@ class User:
     @staticmethod
     def load_all_users(cursor):
         """
-        Load all objects from database, and them to the list.
+        Load all users from database, and them to the list.
 
         :param class cursor: 
 
@@ -115,7 +115,7 @@ class User:
 
     def delete_user(self, cursor):
         """
-        Delete object by it's id.
+        Delete user by it's id.
 
         :param class cursor: 
         

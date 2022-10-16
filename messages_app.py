@@ -6,10 +6,12 @@ from messages_model import Message
 from psycopg2.errors import OperationalError
 import argparse
 
+### TO BE ABLE TO USE THEESE COMMANDS FIRST YOU NEED TO WRITE "python3 users_app.py " ###
+##### IN THE CONSOLE, AND THEN COMMANDS. E.G -u {username} or --username {username} #####
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--username", help="username")
-parser.add_argument("-p", "--password", help="password")
+parser.add_argument("-p", "--password", help="password (min 8 characters)")
 parser.add_argument("-t", "--to", help="who should receive the message")
 parser.add_argument("-s", "--send", nargs='+', help="message")
 parser.add_argument("-l", "--list", help="list of messages", action="store_true")
@@ -17,6 +19,15 @@ args = parser.parse_args()
 
 
 def list_all_messages(cur, user): 
+    """
+    Lists all messages from database sent by specified user, using command from commands list.
+
+    :param class cursor:
+    :param user: author of messages
+
+    Displays all messages sent by the user.
+    """
+
     messages = Message.load_all_messages(cur, user.id)
     for message in messages:
         from_ = User.load_user_by_id(cur, message.from_id)
@@ -26,6 +37,18 @@ def list_all_messages(cur, user):
 
 
 def send_message(cur, from_id, recipient_name, text):
+    """
+    Create new message using command from command list.
+    
+    :param class cursor:
+    :param int from_id:
+    :param str recipient_name:
+    :param str text:
+
+    Takes text of the message, checks if it's length is smaller than 255, if isn't print apropriate communicate.
+    Checks if recipient of the message exists in databse, if exists, send the message to that user.
+    """
+    
     if len(text) <= 255:
         to_ = User.load_user_by_username(cur, recipient_name)
         if to_:
