@@ -19,11 +19,21 @@ args = parser.parse_args()
 def list_all_messages(cur): 
     messages = Message.load_all_messages(cur)
     for message in messages:
-        from_ = User.load_user_by_id(cur, message.to_id)
-        print("============================================")
-        print(f"To: {from_.username}\nSent: {message.creation_date}\nMessage: {message.text}")
+        from_ = User.load_user_by_id(cur, message.from_id)
+        to_ = User.load_user_by_id(cur, message.to_id)
+        print(f"From: {from_.username}\nTo: {to_.username}\nSent: {message.creation_date}\nMessage: {message.text}")
         print("============================================")
 
+
+def send_message(cur, from_id, recipient_name, text):
+    if len(text) <= 255:
+        to_ = User.load_user_by_username(cur, recipient_name)
+        if to_:
+            message = Message(from_id, to_.id, text=text)
+            message.save_message_to_db(cur)
+            print("Message send.")
+    else:
+        print("Message is too long.")
 
 if __name__ == "__main__":
     try:
@@ -41,10 +51,10 @@ if __name__ == "__main__":
         validate_password = check_password(args.password, user.hashed_password)
         if user:
             if validate_password:
-                if args.username and args.password and args.list:
+                if args.list:
                     list_all_messages(cursor)
-                # elif args.username and args.password and args.delete:
-                #     delete_user(cursor, args.username, args.password)
+                elif args.to and args.send:
+                    send_message(cursor, user.id, args.to, args.send)
                 else:
                     parser.print_help()
             else:
