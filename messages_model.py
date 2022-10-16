@@ -13,6 +13,7 @@ class Message:
     def id(self):
         return self._id
 
+ 
     def save_message_to_db(self, cursor):
         if self._id == -1:
             sql = "INSERT INTO messages (from_id, to_id, text, creation_date) VALUES(%s, %s, %s, %s RETURNING id"
@@ -27,18 +28,15 @@ class Message:
             self._id = cursor.fetchone()[0]
             return True
 
-
-    def load_all_messages(self, cursor):
+    @staticmethod
+    def load_all_messages(cursor):
         sql = "SELECT id, from_id, to_id, text, creation_date FROM messages"
         messages = []
         cursor.execute(sql, cursor)
         for row in cursor.fetchall():
             id_, from_id, to_id, text, creation_date = row
-            loaded_message = Message()
-            loaded_message.id = id_
-            loaded_message.from_id = from_id
-            loaded_message.to_id = to_id
-            loaded_message.text = text
+            loaded_message = Message(from_id, to_id, text)
+            loaded_message._id = id_
             loaded_message.creation_date = creation_date
             messages.append(loaded_message)
         return messages
